@@ -3,7 +3,6 @@ import { Menu, X, Scale, Facebook, Twitter, Linkedin, Instagram, ArrowRight, Shi
 import { CourseCard } from './CourseCard';
 import { Button } from './Button';
 import { Course, Instructor, Testimonial } from '../types';
-import { SocialProofToast } from './SocialProofToast';
 
 interface LandingPageProps {
   courses: Course[];
@@ -64,7 +63,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
   return (
     <div className="min-h-screen flex flex-col font-sans relative">
-      <SocialProofToast />
       
       {/* Navigation */}
       <nav className="fixed w-full z-50 bg-juris-900/80 backdrop-blur-xl border-b border-white/10 text-white transition-all duration-700 ease-elegant animate-fade-in-down">
