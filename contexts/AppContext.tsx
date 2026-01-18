@@ -32,18 +32,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     // Check initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      if (session) setView('dashboard');
+      
+      if (session) {
+        // Se houver sessão real, redireciona para o dashboard
+        setView('dashboard');
+      } else {
+        // Se não houver sessão, garante que estamos na landing page
+        setView('landing');
+      }
       
       // Demo check
+      // Nota: Não forçamos mais o redirecionamento para 'dashboard' aqui para evitar
+      // que a tela de login apareça caso a sessão ainda não esteja pronta.
+      // O usuário demo começará na Landing Page e clicará em "Entrar".
       if (!session && localStorage.getItem('juris_demo_user')) {
         setSession({ user: { email: 'demo@jurisacademy.com', user_metadata: { name: 'Dr. Demo' } } });
-        if (window.location.hash !== '#landing') setView('dashboard');
       }
       setIsLoading(false);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      // Se não tem sessão e não é demo, vai para landing
       if (!session && !localStorage.getItem('juris_demo_user')) {
         setView('landing');
       }
