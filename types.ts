@@ -5,6 +5,7 @@ export interface Course {
   price: number;
   image: string;
   features: string[];
+  modules: string[];
   level: 'Iniciante' | 'Intermediário' | 'Avançado';
   duration: string;
 }

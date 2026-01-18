@@ -1,20 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Course } from '../types';
 import { Button } from './Button';
-import { CheckCircle, Clock, BarChart } from 'lucide-react';
+import { CheckCircle, Clock, BarChart, ChevronDown, ChevronUp, BookOpen, Lock } from 'lucide-react';
 
 interface CourseCardProps {
   course: Course;
 }
 
 export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
+  const [showCurriculum, setShowCurriculum] = useState(false);
+
   return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
-      <div className="relative h-48 overflow-hidden">
+    <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-2xl transition-all duration-300 flex flex-col h-full">
+      <div className="relative h-48 overflow-hidden group">
         <img 
           src={course.image} 
           alt={course.title} 
-          className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
         />
         <div className="absolute top-4 right-4 bg-juris-900 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
           {course.level}
@@ -37,12 +39,45 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
         <p className="text-gray-600 mb-6 text-sm flex-1 leading-relaxed">{course.description}</p>
         
         <div className="space-y-2 mb-6">
+          <p className="text-xs font-bold text-juris-accent uppercase tracking-wide mb-2">Destaques:</p>
           {course.features.slice(0, 3).map((feature, idx) => (
             <div key={idx} className="flex items-start text-sm text-gray-700">
-              <CheckCircle className="w-4 h-4 text-juris-accent mr-2 mt-0.5 flex-shrink-0" />
+              <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
               <span>{feature}</span>
             </div>
           ))}
+        </div>
+
+        {/* Curriculum Toggle */}
+        <div className="mb-6 border rounded-lg border-gray-200 overflow-hidden bg-gray-50/50">
+          <button 
+            onClick={() => setShowCurriculum(!showCurriculum)}
+            className="w-full flex items-center justify-between text-sm font-semibold text-juris-800 px-4 py-3 hover:bg-gray-100 transition-colors"
+          >
+            <span className="flex items-center gap-2">
+              <BookOpen className="w-4 h-4 text-juris-gold" />
+              Grade Curricular
+            </span>
+            {showCurriculum ? <ChevronUp className="w-4 h-4 text-gray-500" /> : <ChevronDown className="w-4 h-4 text-gray-500" />}
+          </button>
+          
+          <div className={`transition-all duration-300 ease-in-out ${showCurriculum ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+            <div className="bg-white p-3 border-t border-gray-100">
+               <div className="flex items-center justify-end mb-2">
+                  <span className="text-[10px] uppercase font-bold text-juris-gold flex items-center gap-1 bg-juris-gold/10 px-2 py-0.5 rounded-full">
+                    <Lock className="w-3 h-3" /> Conteúdo Exclusivo Alunos
+                  </span>
+               </div>
+               <ul className="text-xs text-gray-600 space-y-2 overflow-y-auto max-h-64 pr-2">
+                {course.modules.map((mod, idx) => (
+                    <li key={idx} className="flex items-start justify-between gap-3 py-2 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors px-1 rounded">
+                        <span className="leading-snug flex-1 font-medium">{mod}</span>
+                        <Lock className="w-3 h-3 text-gray-300 mt-0.5 flex-shrink-0" aria-label="Bloqueado" />
+                    </li>
+                ))}
+               </ul>
+            </div>
+          </div>
         </div>
 
         <div className="mt-auto border-t pt-4 border-gray-100">
@@ -53,7 +88,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(course.price)}
               </span>
             </div>
-            <Button variant="primary" size="sm" onClick={() => alert(`Matrícula iniciada para: ${course.title}`)}>
+            <Button variant="primary" size="sm" onClick={() => alert(`Você será redirecionado para a plataforma de pagamento segura.`)}>
               Matricular-se
             </Button>
           </div>

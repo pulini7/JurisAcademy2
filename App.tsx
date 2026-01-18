@@ -1,17 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Menu, X, Scale, Facebook, Twitter, Linkedin, Instagram, ArrowRight, ShieldCheck, Check, ChevronDown, Award, Users, Zap } from 'lucide-react';
-import { COURSES, TESTIMONIALS, FAQ_ITEMS, INSTRUCTORS } from './constants';
+import { COURSES as STATIC_COURSES, TESTIMONIALS as STATIC_TESTIMONIALS, FAQ_ITEMS, INSTRUCTORS as STATIC_INSTRUCTORS } from './constants';
 import { CourseCard } from './components/CourseCard';
 import { Assistant } from './components/Assistant';
 import { Button } from './components/Button';
+import { supabase } from './services/supabaseClient';
+import { Course, Instructor, Testimonial } from './types';
 
 const App: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
+  // State for dynamic data (defaults to static data for immediate render/fallback)
+  const [courses, setCourses] = useState<Course[]>(STATIC_COURSES);
+  const [instructors, setInstructors] = useState<Instructor[]>(STATIC_INSTRUCTORS);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(STATIC_TESTIMONIALS);
+
   const toggleFaq = (index: number) => {
     setOpenFaqIndex(openFaqIndex === index ? null : index);
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // 1. Fetch Courses
+      const { data: coursesData, error: coursesError } = await supabase
+        .from('courses')
+        .select('*');
+      
+      if (!coursesError && coursesData && coursesData.length > 0) {
+        setCourses(coursesData);
+      }
+
+      // 2. Fetch Instructors
+      const { data: instructorsData, error: instructorsError } = await supabase
+        .from('instructors')
+        .select('*');
+      
+      if (!instructorsError && instructorsData && instructorsData.length > 0) {
+        setInstructors(instructorsData);
+      }
+
+      // 3. Fetch Testimonials
+      const { data: testimonialsData, error: testimonialsError } = await supabase
+        .from('testimonials')
+        .select('*');
+      
+      if (!testimonialsError && testimonialsData && testimonialsData.length > 0) {
+        setTestimonials(testimonialsData);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col font-sans">
@@ -183,7 +223,7 @@ const App: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {COURSES.map((course, index) => (
+            {courses.map((course, index) => (
               <div key={course.id} className="relative">
                 {index === 0 && (
                   <div className="absolute -top-4 inset-x-0 flex justify-center z-20">
@@ -228,7 +268,7 @@ const App: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {INSTRUCTORS.map((instructor) => (
+            {instructors.map((instructor) => (
               <div key={instructor.id} className="group text-center">
                 <div className="relative inline-block mb-6">
                   <div className="absolute inset-0 bg-juris-accent blur-xl opacity-20 group-hover:opacity-40 transition-opacity rounded-full"></div>
@@ -302,7 +342,7 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center text-juris-900 mb-16">Quem aplica, tem resultados</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {TESTIMONIALS.map((testimonial) => (
+            {testimonials.map((testimonial) => (
               <div key={testimonial.id} className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 relative hover:shadow-xl transition-shadow">
                 <div className="flex items-center mb-6">
                   <img src={testimonial.avatar} alt={testimonial.name} className="w-14 h-14 rounded-full mr-4 border-2 border-juris-gold object-cover" />

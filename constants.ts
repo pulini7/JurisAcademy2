@@ -3,13 +3,30 @@ import { Course, Testimonial, Instructor } from './types';
 export const COURSES: Course[] = [
   {
     id: '1',
-    title: 'Prompt Engineering Jurídico',
-    description: 'Pare de usar o ChatGPT como um Google melhorado. Aprenda a criar comandos (prompts) que redigem petições iniciais, contestação e recursos com 90% de precisão técnica.',
+    title: 'Inteligência Artificial para Advogados',
+    description: 'A formação definitiva e mais completa do mercado. Domine desde os fundamentos da IA até a engenharia de prompts avançada, análise preditiva e governança de dados.',
     price: 497.00,
     image: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=800',
-    features: ['Biblioteca de 500+ Prompts Jurídicos', 'Análise Contratual em Segundos', 'Estruturação de Teses Complexas'],
+    features: ['Análise Preditiva e Jurimetria', 'Engenharia de Prompts Avançada', 'Governança e Ética da IA'],
+    modules: [
+      '1 – Introdução à Inteligência Artificial no Direito',
+      '2 – Análise Preditiva Aplicada ao Direito',
+      '3 – Inteligência Artificial Aplicada ao Direito: Inovação e Desafios no Mundo Jurídico',
+      '4 – Direito da Inteligência Artificial, Ética e Proteção de Dados para Advogados',
+      '5 – Governança Internacional da Inteligência Artificial: Desafios e Perspectivas Jurídicas',
+      '6 – Material Educacional',
+      '7 – Regulamentação da Inteligência Artificial no Brasil: Panorama Atual e Desafios',
+      '8 – Inteligência Artificial Generativa: Introdução Prática para Advogados',
+      '9 – Uso da IA Generativa na Criação de Documentos Jurídicos',
+      '10 – Ética e Riscos Jurídicos da IA Generativa na Advocacia',
+      '11 – Educação Jurídica',
+      '12 – Técnicas Avançadas de Engenharia de Prompts Jurídicos',
+      '13 – Biblioteca Prática de Prompts Jurídicos',
+      '14 – Automação Jurídica, IA na Decisão e Visual Law: Estratégias para o Direito do Futuro',
+      '15 – O Futuro da Advocacia na Era da Inteligência Artificial'
+    ],
     level: 'Iniciante',
-    duration: '20h'
+    duration: '40h'
   },
   {
     id: '2',
@@ -18,6 +35,16 @@ export const COURSES: Course[] = [
     price: 697.00,
     image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=800',
     features: ['Adequação à LGPD e IA', 'Responsabilidade Civil de Algoritmos', 'Auditoria de Sistemas Autônomos'],
+    modules: [
+      'Fundamentos de Compliance Digital',
+      'Marco Legal da IA (Brasil e Mundo)',
+      'Viés Algorítmico e Discriminação',
+      'Governança de Dados para IA',
+      'Responsabilidade Civil de IAs Autônomas',
+      'Auditoria de Algoritmos',
+      'Implementação de Comitês de Ética',
+      'Workshop: Criando um Programa de Compliance de IA'
+    ],
     level: 'Intermediário',
     duration: '35h'
   },
@@ -28,6 +55,16 @@ export const COURSES: Course[] = [
     price: 997.00,
     image: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&q=80&w=800',
     features: ['APIs do Gemini e OpenAI', 'Automação via n8n e Zapier', 'Dashboard de Jurimetria em Tempo Real'],
+    modules: [
+      'Introdução ao Legal Operations',
+      'Mapeamento de Fluxos Jurídicos',
+      'Ferramentas No-Code: Zapier e n8n',
+      'Integrando ChatGPT/Gemini via API',
+      'Automação de Leitura de Publicações',
+      'Criação de Dashboards de Jurimetria',
+      'Gestão Ágil para Escritórios',
+      'Projeto Final: Construindo seu Robô Jurídico'
+    ],
     level: 'Avançado',
     duration: '50h'
   }
