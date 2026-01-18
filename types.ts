@@ -38,10 +38,12 @@ export interface Testimonial {
   avatar: string;
 }
 
+// Atualizado para refletir estrutura do DB/API
 export interface ChatMessage {
   id: string;
   role: 'user' | 'model';
-  text: string;
+  content: string; // Renomeado de 'text' para 'content' para padronização
+  created_at?: string;
 }
 
 export interface Instructor {
@@ -50,4 +52,10 @@ export interface Instructor {
   role: string;
   bio: string;
   image: string;
+}
+
+export interface ChatResponse {
+  message: string;
+  messageId: string;
+  conversationId: string;
 }
