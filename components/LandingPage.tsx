@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Menu, X, Scale, Facebook, Twitter, Linkedin, Instagram, ArrowRight, ShieldCheck, ChevronDown, Users, Zap, Award } from 'lucide-react';
+import { Menu, X, Scale, Facebook, Twitter, Linkedin, Instagram, ArrowRight, ShieldCheck, ChevronDown, Users } from 'lucide-react';
 import { CourseCard } from './CourseCard';
-import { Assistant } from './Assistant';
 import { Button } from './Button';
 import { Course, Instructor, Testimonial } from '../types';
 
@@ -45,7 +44,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 <a href="#problem" className="hover:text-juris-gold px-3 py-2 rounded-md text-sm font-medium transition-colors">O Cenário</a>
                 <a href="#courses" className="hover:text-juris-gold px-3 py-2 rounded-md text-sm font-medium transition-colors">Cursos</a>
                 <a href="#faculty" className="hover:text-juris-gold px-3 py-2 rounded-md text-sm font-medium transition-colors">Docentes</a>
-                <a href="#assistant" className="hover:text-juris-gold px-3 py-2 rounded-md text-sm font-medium transition-colors">Consultor IA</a>
                 <Button 
                     variant="secondary" 
                     size="sm" 
@@ -75,7 +73,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               <a href="#problem" className="block hover:bg-juris-700 px-3 py-2 rounded-md text-base font-medium">O Cenário</a>
               <a href="#courses" className="block hover:bg-juris-700 px-3 py-2 rounded-md text-base font-medium">Cursos</a>
               <a href="#faculty" className="block hover:bg-juris-700 px-3 py-2 rounded-md text-base font-medium">Docentes</a>
-              <a href="#assistant" className="block hover:bg-juris-700 px-3 py-2 rounded-md text-base font-medium">Consultor IA</a>
               <div className="pt-4">
                 <Button variant="secondary" className="w-full" onClick={onLoginClick}>Área do Aluno</Button>
               </div>
@@ -118,14 +115,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             >
               Quero Me Atualizar Agora <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="text-lg px-10 border-gray-600 text-gray-300 hover:text-white hover:bg-white/5"
-              onClick={() => document.getElementById('assistant')?.scrollIntoView({behavior: 'smooth'})}
-            >
-              Estou com Dúvidas
-            </Button>
           </div>
 
           <div className="mt-12 flex justify-center items-center space-x-8 text-gray-500 text-sm font-medium uppercase tracking-widest opacity-70">
@@ -146,9 +135,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <div className="relative">
                <div className="absolute top-0 left-0 w-full h-full bg-juris-accent/10 rounded-2xl transform rotate-3"></div>
                <img 
-                 src="https://images.unsplash.com/photo-1505664194779-8beaceb93744?auto=format&fit=crop&q=80&w=1000" 
-                 alt="Advogado cansado" 
-                 className="relative rounded-2xl shadow-2xl grayscale hover:grayscale-0 transition-all duration-500"
+                 src="https://images.unsplash.com/photo-1505664063603-28e48ca204eb?auto=format&fit=crop&q=80&w=1000" 
+                 alt="Biblioteca Jurídica Tradicional" 
+                 className="relative rounded-2xl shadow-2xl grayscale hover:grayscale-0 transition-all duration-500 object-cover h-[500px] w-full"
                />
             </div>
             <div>
@@ -261,53 +250,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 <p className="text-gray-600 text-sm leading-relaxed px-2">{instructor.bio}</p>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Assistant Section */}
-      <section id="assistant" className="py-24 bg-juris-900 relative overflow-hidden">
-         <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-juris-800 to-transparent opacity-50"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-            <div className="lg:sticky lg:top-24">
-              <div className="inline-flex items-center space-x-2 bg-juris-800 rounded-lg px-3 py-1 mb-6 border border-juris-700">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-green-400 text-xs font-bold uppercase">Consultor Online</span>
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight">
-                Ainda com dúvidas sobre qual caminho seguir?
-              </h2>
-              <p className="text-lg text-gray-300 mb-8 leading-relaxed">
-                Nossa IA foi treinada com o conhecimento dos nossos melhores consultores de carreira. 
-                Ela vai analisar seu perfil (área de atuação, tempo de carreira) e indicar o investimento com maior retorno para você.
-              </p>
-              
-              <div className="space-y-6">
-                <div className="flex items-start">
-                   <div className="bg-juris-700 p-3 rounded-lg mr-4">
-                      <Zap className="w-6 h-6 text-juris-gold" />
-                   </div>
-                   <div>
-                     <h4 className="text-white font-bold text-lg">Respostas Instantâneas</h4>
-                     <p className="text-gray-400 text-sm">Sem filas de espera. O atendimento é imediato e personalizado.</p>
-                   </div>
-                </div>
-                <div className="flex items-start">
-                   <div className="bg-juris-700 p-3 rounded-lg mr-4">
-                      <Award className="w-6 h-6 text-juris-gold" />
-                   </div>
-                   <div>
-                     <h4 className="text-white font-bold text-lg">Recomendação Precisa</h4>
-                     <p className="text-gray-400 text-sm">Baseado em milhares de casos de sucesso de ex-alunos.</p>
-                   </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="w-full">
-               <Assistant />
-            </div>
           </div>
         </div>
       </section>

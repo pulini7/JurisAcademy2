@@ -142,7 +142,14 @@ export const Assistant: React.FC = () => {
             </p>
             <Button 
                 variant="secondary" 
-                onClick={() => (document.querySelector('nav button:last-child') as HTMLElement)?.click() || alert("Use o botão 'Área do Aluno' no topo para entrar.")}
+                onClick={() => {
+                  const navBtn = document.querySelector('nav button:last-child') as HTMLElement;
+                  if (navBtn) {
+                    navBtn.click();
+                  } else {
+                    alert("Use o botão 'Área do Aluno' no topo para entrar.");
+                  }
+                }}
             >
                 Fazer Login / Cadastrar
             </Button>
