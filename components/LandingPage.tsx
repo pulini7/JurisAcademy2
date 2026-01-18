@@ -58,6 +58,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
     setOpenFaqIndex(openFaqIndex === index ? null : index);
   };
 
+  const navLinkClass = "hover:text-juris-gold px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-juris-gold after:left-0 after:bottom-0 after:transition-all hover:after:w-full active:scale-95 active:text-yellow-500 transform";
+
   return (
     <div className="min-h-screen flex flex-col font-sans">
       {/* Navigation */}
@@ -65,21 +67,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             <div className="flex items-center space-x-2 cursor-pointer group" onClick={() => window.scrollTo(0,0)}>
-              <div className="bg-gradient-to-tr from-juris-gold to-yellow-500 p-1.5 rounded-lg shadow-lg shadow-yellow-500/20 group-hover:rotate-12 transition-transform duration-300">
+              <div className="bg-gradient-to-tr from-juris-gold to-yellow-500 p-1.5 rounded-lg shadow-lg shadow-yellow-500/20 group-hover:rotate-12 transition-transform duration-300 active:scale-90">
                 <Scale className="h-6 w-6 text-juris-900" />
               </div>
-              <span className="text-2xl font-bold tracking-tight">Juris<span className="text-juris-gold">Academy</span></span>
+              <span className="text-2xl font-bold tracking-tight select-none">Juris<span className="text-juris-gold">Academy</span></span>
             </div>
             
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-8">
-                <a href="#problem" className="hover:text-juris-gold px-3 py-2 rounded-md text-sm font-medium transition-colors relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-juris-gold after:left-0 after:bottom-0 after:transition-all hover:after:w-full">O Cenário</a>
-                <a href="#courses" className="hover:text-juris-gold px-3 py-2 rounded-md text-sm font-medium transition-colors relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-juris-gold after:left-0 after:bottom-0 after:transition-all hover:after:w-full">Cursos</a>
-                <a href="#faculty" className="hover:text-juris-gold px-3 py-2 rounded-md text-sm font-medium transition-colors relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-juris-gold after:left-0 after:bottom-0 after:transition-all hover:after:w-full">Docentes</a>
+                <a href="#problem" className={navLinkClass}>O Cenário</a>
+                <a href="#courses" className={navLinkClass}>Cursos</a>
+                <a href="#faculty" className={navLinkClass}>Docentes</a>
                 <Button 
                     variant="secondary" 
                     size="sm" 
-                    className="shadow-lg shadow-yellow-500/20 transform hover:-translate-y-0.5 transition-transform duration-300"
+                    className="shadow-lg shadow-yellow-500/20 transform hover:-translate-y-0.5 transition-all duration-300 active:scale-95 active:translate-y-0"
                     onClick={onLoginClick}
                 >
                   Área do Aluno
@@ -90,7 +92,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <div className="md:hidden">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none"
+                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none active:scale-90 transition-transform"
               >
                 {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </button>
@@ -102,11 +104,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         {isMenuOpen && (
           <div className="md:hidden bg-juris-800 border-t border-juris-700 animate-fade-in">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              <a href="#problem" className="block hover:bg-juris-700 px-3 py-2 rounded-md text-base font-medium">O Cenário</a>
-              <a href="#courses" className="block hover:bg-juris-700 px-3 py-2 rounded-md text-base font-medium">Cursos</a>
-              <a href="#faculty" className="block hover:bg-juris-700 px-3 py-2 rounded-md text-base font-medium">Docentes</a>
+              <a href="#problem" className="block hover:bg-juris-700 px-3 py-2 rounded-md text-base font-medium active:bg-juris-600 transition-colors" onClick={() => setIsMenuOpen(false)}>O Cenário</a>
+              <a href="#courses" className="block hover:bg-juris-700 px-3 py-2 rounded-md text-base font-medium active:bg-juris-600 transition-colors" onClick={() => setIsMenuOpen(false)}>Cursos</a>
+              <a href="#faculty" className="block hover:bg-juris-700 px-3 py-2 rounded-md text-base font-medium active:bg-juris-600 transition-colors" onClick={() => setIsMenuOpen(false)}>Docentes</a>
               <div className="pt-4">
-                <Button variant="secondary" className="w-full" onClick={onLoginClick}>Área do Aluno</Button>
+                <Button variant="secondary" className="w-full active:scale-95 transition-transform" onClick={() => { onLoginClick(); setIsMenuOpen(false); }}>Área do Aluno</Button>
               </div>
             </div>
           </div>
@@ -142,7 +144,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <Button 
               variant="secondary" 
               size="lg" 
-              className="text-lg px-10 shadow-[0_0_20px_rgba(251,191,36,0.3)] hover:shadow-[0_0_30px_rgba(251,191,36,0.6)] transform hover:-translate-y-1 transition-all duration-300"
+              className="text-lg px-10 shadow-[0_0_20px_rgba(251,191,36,0.3)] hover:shadow-[0_0_30px_rgba(251,191,36,0.6)] transform hover:-translate-y-1 transition-all duration-300 active:scale-95 active:translate-y-0"
               onClick={() => document.getElementById('courses')?.scrollIntoView({behavior: 'smooth'})}
             >
               Quero Me Atualizar Agora <ArrowRight className="ml-2 w-5 h-5 animate-bounce-x" />
@@ -152,9 +154,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           <div className="mt-12 flex justify-center items-center space-x-8 text-gray-500 text-sm font-medium uppercase tracking-widest opacity-70 animate-fade-in delay-500">
             <span>Usado por advogados de:</span>
             <div className="flex space-x-6 grayscale opacity-60 hover:grayscale-0 transition-all duration-500">
-               <span className="font-serif text-lg font-bold hover:text-white transition-colors">Pinheiro Neto</span>
-               <span className="font-serif text-lg font-bold hover:text-white transition-colors">Mattos Filho</span>
-               <span className="font-serif text-lg font-bold hover:text-white transition-colors">Demarest</span>
+               <span className="font-serif text-lg font-bold hover:text-white transition-colors cursor-default hover:scale-105 transform duration-300">Pinheiro Neto</span>
+               <span className="font-serif text-lg font-bold hover:text-white transition-colors cursor-default hover:scale-105 transform duration-300">Mattos Filho</span>
+               <span className="font-serif text-lg font-bold hover:text-white transition-colors cursor-default hover:scale-105 transform duration-300">Demarest</span>
             </div>
           </div>
         </div>
@@ -183,8 +185,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </p>
               <ul className="space-y-4 mb-8">
                 {['Honorários achatados pela concorrência desleal.', 'Clientes exigindo respostas imediatas (efeito WhatsApp).', 'Sobrecarga de trabalho operacional e burocrático.'].map((item, i) => (
-                    <li key={i} className="flex items-start hover:translate-x-2 transition-transform duration-300">
-                      <div className="bg-red-100 p-1.5 rounded-full mr-3 mt-1 shrink-0">
+                    <li key={i} className="flex items-start hover:translate-x-2 transition-transform duration-300 group">
+                      <div className="bg-red-100 p-1.5 rounded-full mr-3 mt-1 shrink-0 group-hover:bg-red-200 transition-colors">
                         <X className="w-4 h-4 text-red-600" />
                       </div>
                       <span className="text-gray-700">{item}</span>
@@ -242,7 +244,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                  <p className="text-gray-600">Acesse o curso. Se não gostar, devolvemos 100% do seu dinheiro. Sem perguntas.</p>
                </div>
              </div>
-             <Button variant="outline" className="shrink-0 hover:scale-105 transition-transform" onClick={() => window.scrollTo(0,0)}>
+             <Button variant="outline" className="shrink-0 hover:scale-105 active:scale-95 transition-transform" onClick={() => window.scrollTo(0,0)}>
                Ler Termos da Garantia
              </Button>
           </RevealOnScroll>
@@ -264,7 +266,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {instructors.map((instructor, index) => (
-              <RevealOnScroll key={instructor.id} delay={`delay-${index * 100}`} className="group text-center">
+              <RevealOnScroll key={instructor.id} delay={`delay-${index * 100}`} className="group text-center cursor-default">
                 <div className="relative inline-block mb-6">
                   <div className="absolute inset-0 bg-juris-accent blur-xl opacity-20 group-hover:opacity-40 transition-opacity rounded-full duration-500"></div>
                   <img 
@@ -291,7 +293,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
               <RevealOnScroll key={testimonial.id} delay={`delay-${index * 100}`}>
-                <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 relative hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 relative hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 cursor-default">
                   <div className="flex items-center mb-6">
                     <img src={testimonial.avatar} alt={testimonial.name} className="w-14 h-14 rounded-full mr-4 border-2 border-juris-gold object-cover" />
                     <div>
@@ -323,7 +325,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               <RevealOnScroll key={index} delay={`delay-${index * 50}`}>
                 <div className="border border-gray-200 rounded-lg overflow-hidden hover:border-juris-accent/50 transition-colors duration-300">
                   <button
-                    className="w-full px-6 py-5 text-left bg-gray-50 hover:bg-gray-100 transition-colors flex justify-between items-center focus:outline-none"
+                    className="w-full px-6 py-5 text-left bg-gray-50 hover:bg-gray-100 transition-colors flex justify-between items-center focus:outline-none active:bg-gray-200"
                     onClick={() => toggleFaq(index)}
                   >
                     <span className="font-semibold text-juris-900 text-lg">{item.question}</span>
@@ -346,8 +348,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             <div className="col-span-1 md:col-span-1">
-              <div className="flex items-center space-x-2 mb-6 group cursor-pointer">
-                 <div className="bg-juris-gold/10 p-1.5 rounded-lg group-hover:bg-juris-gold/20 transition-colors">
+              <div className="flex items-center space-x-2 mb-6 group cursor-pointer" onClick={() => window.scrollTo(0,0)}>
+                 <div className="bg-juris-gold/10 p-1.5 rounded-lg group-hover:bg-juris-gold/20 transition-colors active:scale-95 duration-200">
                   <Scale className="h-6 w-6 text-juris-gold group-hover:scale-110 transition-transform" />
                 </div>
                 <span className="text-2xl font-bold text-white tracking-tight">Juris<span className="text-juris-gold">Academy</span></span>
@@ -356,10 +358,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 A primeira escola de tecnologia jurídica focada 100% em resultados práticos.
               </p>
               <div className="flex space-x-4">
-                <a href="#" className="text-gray-400 hover:text-white transition-colors hover:scale-110 transform duration-200"><Facebook className="w-5 h-5" /></a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors hover:scale-110 transform duration-200"><Twitter className="w-5 h-5" /></a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors hover:scale-110 transform duration-200"><Linkedin className="w-5 h-5" /></a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors hover:scale-110 transform duration-200"><Instagram className="w-5 h-5" /></a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors hover:scale-110 active:scale-90 transform duration-200"><Facebook className="w-5 h-5" /></a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors hover:scale-110 active:scale-90 transform duration-200"><Twitter className="w-5 h-5" /></a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors hover:scale-110 active:scale-90 transform duration-200"><Linkedin className="w-5 h-5" /></a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors hover:scale-110 active:scale-90 transform duration-200"><Instagram className="w-5 h-5" /></a>
               </div>
             </div>
             {/* Links columns */}
@@ -372,7 +374,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 <h3 className="text-white font-bold mb-6 text-lg">{col.title}</h3>
                 <ul className="space-y-3 text-sm">
                   {col.links.map((link, lIdx) => (
-                    <li key={lIdx}><a href="#" className="hover:text-juris-gold transition-colors hover:translate-x-1 inline-block duration-200">{link}</a></li>
+                    <li key={lIdx}><a href="#" className="hover:text-juris-gold transition-colors hover:translate-x-1 active:scale-95 inline-block duration-200">{link}</a></li>
                   ))}
                 </ul>
               </div>
