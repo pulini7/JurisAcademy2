@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Loader2, Sparkles } from 'lucide-react';
 import { ChatMessage } from '../types';
-import { sendMessageToGemini } from '../services/geminiService';
+import { chatService } from '../services/geminiService';
 import { Button } from './Button';
 
 export const Assistant: React.FC = () => {
@@ -24,13 +24,19 @@ export const Assistant: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
-  const handleSend = async () => {
-    if (!input.trim()) return;
+  // Inicializa o chat sempre que o componente é montado para garantir sessão limpa
+  useEffect(() => {
+    chatService.startChat();
+  }, []);
 
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return;
+
+    const userText = input;
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
-      text: input
+      text: userText
     };
 
     setMessages(prev => [...prev, userMessage]);
@@ -38,7 +44,7 @@ export const Assistant: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const responseText = await sendMessageToGemini(input);
+      const responseText = await chatService.sendMessage(userText);
       const botMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'model',
@@ -47,6 +53,12 @@ export const Assistant: React.FC = () => {
       setMessages(prev => [...prev, botMessage]);
     } catch (error) {
       console.error(error);
+      const errorMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'model',
+        text: "Estou enfrentando uma instabilidade momentânea. Por favor, tente novamente em alguns instantes."
+      };
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
@@ -135,6 +147,7 @@ export const Assistant: React.FC = () => {
             onKeyDown={handleKeyPress}
             placeholder="Ex: Qual curso é melhor para contratos?"
             className="w-full bg-juris-800 text-white placeholder-gray-400 border border-juris-700 rounded-xl pl-4 pr-14 py-4 focus:outline-none focus:ring-2 focus:ring-juris-accent focus:border-transparent shadow-inner"
+            disabled={isLoading}
           />
           <button
             onClick={handleSend}
