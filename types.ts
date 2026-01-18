@@ -10,6 +10,26 @@ export interface Course {
   duration: string;
 }
 
+export interface Lesson {
+  id: string;
+  title: string;
+  duration: string;
+  type: 'video' | 'text' | 'quiz';
+  completed?: boolean;
+}
+
+export interface ModuleData {
+  title: string;
+  lessons: Lesson[];
+}
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  name: string;
+  enrolledCourses: string[];
+}
+
 export interface Testimonial {
   id: string;
   name: string;

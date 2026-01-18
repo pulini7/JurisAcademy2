@@ -1,460 +1,111 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Scale, Facebook, Twitter, Linkedin, Instagram, ArrowRight, ShieldCheck, Check, ChevronDown, Award, Users, Zap } from 'lucide-react';
 import { COURSES as STATIC_COURSES, TESTIMONIALS as STATIC_TESTIMONIALS, FAQ_ITEMS, INSTRUCTORS as STATIC_INSTRUCTORS } from './constants';
-import { CourseCard } from './components/CourseCard';
-import { Assistant } from './components/Assistant';
-import { Button } from './components/Button';
 import { supabase } from './services/supabaseClient';
 import { Course, Instructor, Testimonial } from './types';
+import { LandingPage } from './components/LandingPage';
+import { Auth } from './components/Auth';
+import { StudentDashboard } from './components/StudentDashboard';
+import { CoursePlayer } from './components/CoursePlayer';
+
+type ViewState = 'landing' | 'auth' | 'dashboard' | 'player';
 
 const App: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
-
-  // State for dynamic data (defaults to static data for immediate render/fallback)
+  // State for data
   const [courses, setCourses] = useState<Course[]>(STATIC_COURSES);
   const [instructors, setInstructors] = useState<Instructor[]>(STATIC_INSTRUCTORS);
   const [testimonials, setTestimonials] = useState<Testimonial[]>(STATIC_TESTIMONIALS);
-
-  const toggleFaq = (index: number) => {
-    setOpenFaqIndex(openFaqIndex === index ? null : index);
-  };
+  
+  // Navigation & User State
+  const [view, setView] = useState<ViewState>('landing');
+  const [session, setSession] = useState<any>(null);
+  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
 
   useEffect(() => {
+    // 1. Fetch Data
     const fetchData = async () => {
-      // 1. Fetch Courses
-      const { data: coursesData, error: coursesError } = await supabase
-        .from('courses')
-        .select('*');
-      
-      if (!coursesError && coursesData && coursesData.length > 0) {
-        setCourses(coursesData);
-      }
+      const { data: coursesData } = await supabase.from('courses').select('*');
+      if (coursesData && coursesData.length > 0) setCourses(coursesData);
 
-      // 2. Fetch Instructors
-      const { data: instructorsData, error: instructorsError } = await supabase
-        .from('instructors')
-        .select('*');
-      
-      if (!instructorsError && instructorsData && instructorsData.length > 0) {
-        setInstructors(instructorsData);
-      }
+      const { data: instructorsData } = await supabase.from('instructors').select('*');
+      if (instructorsData && instructorsData.length > 0) setInstructors(instructorsData);
 
-      // 3. Fetch Testimonials
-      const { data: testimonialsData, error: testimonialsError } = await supabase
-        .from('testimonials')
-        .select('*');
-      
-      if (!testimonialsError && testimonialsData && testimonialsData.length > 0) {
-        setTestimonials(testimonialsData);
-      }
+      const { data: testimonialsData } = await supabase.from('testimonials').select('*');
+      if (testimonialsData && testimonialsData.length > 0) setTestimonials(testimonialsData);
     };
 
     fetchData();
+
+    // 2. Check Auth
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    // Check for demo user
+    if (localStorage.getItem('juris_demo_user')) {
+        setSession({ user: { email: 'demo@jurisacademy.com' } });
+    }
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  return (
-    <div className="min-h-screen flex flex-col font-sans">
-      {/* Navigation */}
-      <nav className="fixed w-full z-50 bg-juris-900/95 backdrop-blur-md border-b border-juris-800 text-white transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            <div className="flex items-center space-x-2 cursor-pointer" onClick={() => window.scrollTo(0,0)}>
-              <div className="bg-gradient-to-tr from-juris-gold to-yellow-500 p-1.5 rounded-lg shadow-lg shadow-yellow-500/20">
-                <Scale className="h-6 w-6 text-juris-900" />
-              </div>
-              <span className="text-2xl font-bold tracking-tight">Juris<span className="text-juris-gold">Academy</span></span>
-            </div>
-            
-            <div className="hidden md:block">
-              <div className="ml-10 flex items-baseline space-x-8">
-                <a href="#problem" className="hover:text-juris-gold px-3 py-2 rounded-md text-sm font-medium transition-colors">O Cenário</a>
-                <a href="#courses" className="hover:text-juris-gold px-3 py-2 rounded-md text-sm font-medium transition-colors">Cursos</a>
-                <a href="#faculty" className="hover:text-juris-gold px-3 py-2 rounded-md text-sm font-medium transition-colors">Docentes</a>
-                <a href="#assistant" className="hover:text-juris-gold px-3 py-2 rounded-md text-sm font-medium transition-colors">Consultor IA</a>
-                <Button variant="secondary" size="sm" className="shadow-lg shadow-yellow-500/20 transform hover:-translate-y-0.5 transition-transform">
-                  Área do Aluno
-                </Button>
-              </div>
-            </div>
+  const handleLogin = () => {
+    setView('dashboard');
+  };
 
-            <div className="md:hidden">
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none"
-              >
-                {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-              </button>
-            </div>
-          </div>
-        </div>
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    localStorage.removeItem('juris_demo_user');
+    setSession(null);
+    setView('landing');
+  };
 
-        {/* Mobile menu */}
-        {isMenuOpen && (
-          <div className="md:hidden bg-juris-800 border-t border-juris-700 animate-in slide-in-from-top-5">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              <a href="#problem" className="block hover:bg-juris-700 px-3 py-2 rounded-md text-base font-medium">O Cenário</a>
-              <a href="#courses" className="block hover:bg-juris-700 px-3 py-2 rounded-md text-base font-medium">Cursos</a>
-              <a href="#faculty" className="block hover:bg-juris-700 px-3 py-2 rounded-md text-base font-medium">Docentes</a>
-              <a href="#assistant" className="block hover:bg-juris-700 px-3 py-2 rounded-md text-base font-medium">Consultor IA</a>
-              <div className="pt-4">
-                <Button variant="secondary" className="w-full">Área do Aluno</Button>
-              </div>
-            </div>
-          </div>
-        )}
-      </nav>
+  const handleSelectCourse = (courseId: string) => {
+    setSelectedCourseId(courseId);
+    setView('player');
+  };
 
-      {/* Hero Section - High Conversion Copy */}
-      <section id="home" className="relative pt-32 pb-24 lg:pt-48 lg:pb-40 bg-juris-900 overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center opacity-10"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-juris-900 via-juris-900/95 to-juris-900"></div>
-        </div>
-        
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center px-4 py-2 rounded-full border border-juris-700 bg-juris-800/80 backdrop-blur-sm mb-8 shadow-2xl animate-fade-in-up">
-            <span className="w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse"></span>
-            <span className="text-gray-200 text-sm font-medium tracking-wide">A Revolução Jurídica Começou</span>
-          </div>
-          
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight mb-8 leading-tight">
-            A IA não vai substituir advogados.<br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-juris-gold via-yellow-200 to-yellow-500">
-              Advogados que usam IA vão.
-            </span>
-          </h1>
-          
-          <p className="mt-4 max-w-3xl mx-auto text-xl md:text-2xl text-gray-300 mb-10 font-light leading-relaxed">
-            Pare de perder horas em tarefas repetitivas. Aprenda a automatizar peças, analisar contratos em segundos e 
-            <strong className="text-white font-semibold"> multiplicar o faturamento do seu escritório</strong> com as ferramentas certas.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row justify-center gap-5">
-            <Button 
-              variant="secondary" 
-              size="lg" 
-              className="text-lg px-10 shadow-[0_0_20px_rgba(251,191,36,0.3)] hover:shadow-[0_0_30px_rgba(251,191,36,0.5)] transform hover:-translate-y-1"
-              onClick={() => document.getElementById('courses')?.scrollIntoView({behavior: 'smooth'})}
-            >
-              Quero Me Atualizar Agora <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="text-lg px-10 border-gray-600 text-gray-300 hover:text-white hover:bg-white/5"
-              onClick={() => document.getElementById('assistant')?.scrollIntoView({behavior: 'smooth'})}
-            >
-              Estou com Dúvidas
-            </Button>
-          </div>
+  const getSelectedCourse = () => {
+      return courses.find(c => c.id === selectedCourseId) || courses[0];
+  }
 
-          <div className="mt-12 flex justify-center items-center space-x-8 text-gray-500 text-sm font-medium uppercase tracking-widest opacity-70">
-            <span>Usado por advogados de:</span>
-            <div className="flex space-x-6 grayscale opacity-60">
-               {/* Placeholders for logos to indicate authority */}
-               <span className="font-serif text-lg font-bold">Pinheiro Neto</span>
-               <span className="font-serif text-lg font-bold">Mattos Filho</span>
-               <span className="font-serif text-lg font-bold">Demarest</span>
-            </div>
-          </div>
-        </div>
-      </section>
+  // Router Logic
+  switch (view) {
+    case 'auth':
+        return <Auth onLogin={handleLogin} onBack={() => setView('landing')} />;
+    
+    case 'dashboard':
+        // If not logged in, force auth (unless it's just a quick state transition)
+        if (!session) return <Auth onLogin={handleLogin} onBack={() => setView('landing')} />;
+        return <StudentDashboard onLogout={handleLogout} onSelectCourse={handleSelectCourse} />;
 
-      {/* The "Problem" Section - Agitate Pain */}
-      <section id="problem" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div className="relative">
-               <div className="absolute top-0 left-0 w-full h-full bg-juris-accent/10 rounded-2xl transform rotate-3"></div>
-               <img 
-                 src="https://images.unsplash.com/photo-1505664194779-8beaceb93744?auto=format&fit=crop&q=80&w=1000" 
-                 alt="Advogado cansado" 
-                 className="relative rounded-2xl shadow-2xl grayscale hover:grayscale-0 transition-all duration-500"
-               />
-            </div>
-            <div>
-              <h2 className="text-juris-accent font-bold uppercase tracking-wide mb-2">A Realidade Atual</h2>
-              <h3 className="text-4xl font-extrabold text-juris-900 mb-6 leading-tight">
-                O modelo tradicional de advocacia <span className="text-red-600 decoration-red-600 underline decoration-4">colapsou</span>.
-              </h3>
-              <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                Enquanto você gasta 4 horas redigindo uma contestação padrão, um advogado júnior equipado com IA faz a mesma tarefa (com mais qualidade) em <strong>15 minutos</strong>.
-              </p>
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-start">
-                  <div className="bg-red-100 p-1.5 rounded-full mr-3 mt-1">
-                    <X className="w-4 h-4 text-red-600" />
-                  </div>
-                  <span className="text-gray-700">Honorários achatados pela concorrência desleal.</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="bg-red-100 p-1.5 rounded-full mr-3 mt-1">
-                    <X className="w-4 h-4 text-red-600" />
-                  </div>
-                  <span className="text-gray-700">Clientes exigindo respostas imediatas (efeito WhatsApp).</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="bg-red-100 p-1.5 rounded-full mr-3 mt-1">
-                    <X className="w-4 h-4 text-red-600" />
-                  </div>
-                  <span className="text-gray-700">Sobrecarga de trabalho operacional e burocrático.</span>
-                </li>
-              </ul>
-              <p className="text-xl font-bold text-juris-900 border-l-4 border-juris-gold pl-4 py-2 bg-gray-50">
-                A JurisAcademy é a ponte para o outro lado: onde você trabalha menos e ganha mais.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+    case 'player':
+        if (!session) return <Auth onLogin={handleLogin} onBack={() => setView('landing')} />;
+        return <CoursePlayer course={getSelectedCourse()} onBack={() => setView('dashboard')} />;
 
-      {/* Courses Section */}
-      <section id="courses" className="py-24 bg-gray-50 border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-juris-accent font-bold tracking-wide uppercase mb-2">Treinamentos de Elite</h2>
-            <p className="text-3xl md:text-4xl font-extrabold text-juris-900 mb-4">
-              Escolha sua trilha de especialização
-            </p>
-            <p className="max-w-2xl text-xl text-gray-500 mx-auto">
-              Metodologia validada por mais de 5.000 advogados em todo o Brasil.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {courses.map((course, index) => (
-              <div key={course.id} className="relative">
-                {index === 0 && (
-                  <div className="absolute -top-4 inset-x-0 flex justify-center z-20">
-                    <span className="bg-red-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg uppercase tracking-wider">
-                      Mais Vendido
-                    </span>
-                  </div>
-                )}
-                <CourseCard course={course} />
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-16 bg-white rounded-2xl p-8 shadow-xl border border-gray-100 flex flex-col md:flex-row items-center justify-between gap-8">
-             <div className="flex items-center gap-4">
-               <div className="bg-green-100 p-4 rounded-full">
-                 <ShieldCheck className="w-10 h-10 text-green-600" />
-               </div>
-               <div>
-                 <h4 className="text-xl font-bold text-juris-900">Garantia Incondicional de 7 Dias</h4>
-                 <p className="text-gray-600">Acesse o curso. Se não gostar, devolvemos 100% do seu dinheiro. Sem perguntas.</p>
-               </div>
-             </div>
-             <Button variant="outline" className="shrink-0" onClick={() => window.scrollTo(0,0)}>
-               Ler Termos da Garantia
-             </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Faculty Section */}
-      <section id="faculty" className="py-24 bg-white border-t border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-juris-accent font-bold tracking-wide uppercase mb-2">Corpo Docente</h2>
-            <p className="text-3xl md:text-4xl font-extrabold text-juris-900 mb-4">
-              Aprenda com a Elite
-            </p>
-            <p className="max-w-2xl text-xl text-gray-500 mx-auto">
-              Unimos a academia jurídica tradicional com a vanguarda tecnológica do Vale do Silício.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {instructors.map((instructor) => (
-              <div key={instructor.id} className="group text-center">
-                <div className="relative inline-block mb-6">
-                  <div className="absolute inset-0 bg-juris-accent blur-xl opacity-20 group-hover:opacity-40 transition-opacity rounded-full"></div>
-                  <img 
-                    src={instructor.image} 
-                    alt={instructor.name} 
-                    className="relative w-40 h-40 mx-auto rounded-full object-cover border-4 border-white shadow-xl group-hover:scale-105 transition-transform duration-300" 
-                  />
-                </div>
-                <h3 className="text-xl font-bold text-juris-900 mb-1">{instructor.name}</h3>
-                <p className="text-juris-accent font-semibold text-sm mb-3 uppercase tracking-wide">{instructor.role}</p>
-                <p className="text-gray-600 text-sm leading-relaxed px-2">{instructor.bio}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* AI Assistant Section */}
-      <section id="assistant" className="py-24 bg-juris-900 relative overflow-hidden">
-         <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-juris-800 to-transparent opacity-50"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-            <div className="lg:sticky lg:top-24">
-              <div className="inline-flex items-center space-x-2 bg-juris-800 rounded-lg px-3 py-1 mb-6 border border-juris-700">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-green-400 text-xs font-bold uppercase">Consultor Online</span>
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight">
-                Ainda com dúvidas sobre qual caminho seguir?
-              </h2>
-              <p className="text-lg text-gray-300 mb-8 leading-relaxed">
-                Nossa IA foi treinada com o conhecimento dos nossos melhores consultores de carreira. 
-                Ela vai analisar seu perfil (área de atuação, tempo de carreira) e indicar o investimento com maior retorno para você.
-              </p>
-              
-              <div className="space-y-6">
-                <div className="flex items-start">
-                   <div className="bg-juris-700 p-3 rounded-lg mr-4">
-                      <Zap className="w-6 h-6 text-juris-gold" />
-                   </div>
-                   <div>
-                     <h4 className="text-white font-bold text-lg">Respostas Instantâneas</h4>
-                     <p className="text-gray-400 text-sm">Sem filas de espera. O atendimento é imediato e personalizado.</p>
-                   </div>
-                </div>
-                <div className="flex items-start">
-                   <div className="bg-juris-700 p-3 rounded-lg mr-4">
-                      <Award className="w-6 h-6 text-juris-gold" />
-                   </div>
-                   <div>
-                     <h4 className="text-white font-bold text-lg">Recomendação Precisa</h4>
-                     <p className="text-gray-400 text-sm">Baseado em milhares de casos de sucesso de ex-alunos.</p>
-                   </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="w-full">
-               <Assistant />
-               <p className="text-center text-gray-500 text-xs mt-4">
-                 *Ao conversar com o assistente, você concorda com nossa política de privacidade.
-               </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-juris-900 mb-16">Quem aplica, tem resultados</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial) => (
-              <div key={testimonial.id} className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 relative hover:shadow-xl transition-shadow">
-                <div className="flex items-center mb-6">
-                  <img src={testimonial.avatar} alt={testimonial.name} className="w-14 h-14 rounded-full mr-4 border-2 border-juris-gold object-cover" />
-                  <div>
-                    <div className="font-bold text-juris-900">{testimonial.name}</div>
-                    <div className="text-sm text-juris-accent font-medium">{testimonial.role}</div>
-                  </div>
-                </div>
-                <div className="flex mb-4">
-                  {[1,2,3,4,5].map(i => (
-                    <Users key={i} className="w-4 h-4 text-juris-gold fill-current" />
-                  ))}
-                </div>
-                <p className="text-gray-600 leading-relaxed">"{testimonial.content}"</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-juris-900 mb-12">Perguntas Frequentes</h2>
-          <div className="space-y-4">
-            {FAQ_ITEMS.map((item, index) => (
-              <div key={index} className="border border-gray-200 rounded-lg overflow-hidden">
-                <button
-                  className="w-full px-6 py-5 text-left bg-gray-50 hover:bg-gray-100 transition-colors flex justify-between items-center focus:outline-none"
-                  onClick={() => toggleFaq(index)}
-                >
-                  <span className="font-semibold text-juris-900 text-lg">{item.question}</span>
-                  <ChevronDown className={`w-5 h-5 text-gray-500 transform transition-transform duration-200 ${openFaqIndex === index ? 'rotate-180' : ''}`} />
-                </button>
-                <div 
-                  className={`bg-white px-6 overflow-hidden transition-all duration-300 ease-in-out ${openFaqIndex === index ? 'max-h-96 py-5' : 'max-h-0 py-0'}`}
-                >
-                  <p className="text-gray-600 leading-relaxed">{item.answer}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-juris-950 text-gray-400 py-16 border-t border-juris-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-            <div className="col-span-1 md:col-span-1">
-              <div className="flex items-center space-x-2 mb-6">
-                 <div className="bg-juris-gold/10 p-1.5 rounded-lg">
-                  <Scale className="h-6 w-6 text-juris-gold" />
-                </div>
-                <span className="text-2xl font-bold text-white tracking-tight">Juris<span className="text-juris-gold">Academy</span></span>
-              </div>
-              <p className="text-sm leading-relaxed mb-6">
-                A primeira escola de tecnologia jurídica focada 100% em resultados práticos. Junte-se a mais de 5.000 advogados que já modernizaram suas carreiras.
-              </p>
-              <div className="flex space-x-4">
-                <a href="#" className="text-gray-400 hover:text-white transition-colors"><Facebook className="w-5 h-5" /></a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors"><Twitter className="w-5 h-5" /></a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors"><Linkedin className="w-5 h-5" /></a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors"><Instagram className="w-5 h-5" /></a>
-              </div>
-            </div>
-            
-            <div>
-              <h3 className="text-white font-bold mb-6 text-lg">Cursos Populares</h3>
-              <ul className="space-y-3 text-sm">
-                <li><a href="#" className="hover:text-juris-gold transition-colors">Prompt Engineering Jurídico</a></li>
-                <li><a href="#" className="hover:text-juris-gold transition-colors">Compliance & Ética AI</a></li>
-                <li><a href="#" className="hover:text-juris-gold transition-colors">Legal Ops Full Stack</a></li>
-                <li><a href="#" className="hover:text-juris-gold transition-colors">Mentoria Executiva</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-white font-bold mb-6 text-lg">Institucional</h3>
-              <ul className="space-y-3 text-sm">
-                <li><a href="#" className="hover:text-juris-gold transition-colors">Sobre Nós</a></li>
-                <li><a href="#" className="hover:text-juris-gold transition-colors">Blog Jurídico</a></li>
-                <li><a href="#" className="hover:text-juris-gold transition-colors">Imprensa</a></li>
-                <li><a href="#" className="hover:text-juris-gold transition-colors">Trabalhe Conosco</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-white font-bold mb-6 text-lg">Atendimento</h3>
-              <ul className="space-y-3 text-sm">
-                <li className="flex items-center"><span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span> Suporte Aluno (WhatsApp)</li>
-                <li>contato@jurisacademy.com.br</li>
-                <li>Av. Paulista, 1000 - SP</li>
-                <li className="pt-4">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" className="h-6 inline opacity-50 mr-2 bg-white px-1 rounded" alt="Visa" />
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" className="h-6 inline opacity-50 bg-white px-1 rounded" alt="Mastercard" />
-                </li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="border-t border-juris-900 pt-8 flex flex-col md:flex-row justify-between items-center text-sm">
-            <p>&copy; {new Date().getFullYear()} JurisAcademy. Todos os direitos reservados.</p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
-               <a href="#" className="hover:text-white">Termos de Uso</a>
-               <a href="#" className="hover:text-white">Política de Privacidade</a>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </div>
-  );
+    case 'landing':
+    default:
+        return (
+            <LandingPage 
+                courses={courses}
+                instructors={instructors}
+                testimonials={testimonials}
+                faqItems={FAQ_ITEMS}
+                onLoginClick={() => {
+                    if (session) {
+                        setView('dashboard');
+                    } else {
+                        setView('auth');
+                    }
+                }}
+            />
+        );
+  }
 };
 
 export default App;
