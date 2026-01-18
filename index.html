@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JurisAcademy - O Futuro do Direito</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
       tailwind.config = {
+        darkMode: 'class',
         theme: {
           extend: {
             colors: {
@@ -26,6 +28,7 @@
               'slide-in-left': 'slideInLeft 0.8s ease-out forwards',
               'float': 'float 6s ease-in-out infinite',
               'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'bounce-x': 'bounceX 1s infinite',
             },
             keyframes: {
               fadeInUp: {
@@ -51,6 +54,10 @@
               float: {
                 '0%, 100%': { transform: 'translateY(0)' },
                 '50%': { transform: 'translateY(-10px)' },
+              },
+              bounceX: {
+                '0%, 100%': { transform: 'translateX(0)' },
+                '50%': { transform: 'translateX(5px)' },
               }
             }
           }
@@ -87,6 +94,18 @@
   .reveal-visible {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  /* Scrollbar customizada para anotações */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 20px;
   }
 </style>
 </head>

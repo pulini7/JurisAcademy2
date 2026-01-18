@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Course } from '../types';
 import { Button } from './Button';
-import { CheckCircle, Clock, BarChart, ChevronDown, ChevronUp, BookOpen, Lock } from 'lucide-react';
+import { CheckCircle, Clock, BarChart, ChevronDown, ChevronUp, BookOpen, Lock, Loader2 } from 'lucide-react';
 
 interface CourseCardProps {
   course: Course;
@@ -9,6 +9,16 @@ interface CourseCardProps {
 
 export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
   const [showCurriculum, setShowCurriculum] = useState(false);
+  const [isBuying, setIsBuying] = useState(false);
+
+  const handleBuy = () => {
+      setIsBuying(true);
+      // Simula delay de checkout
+      setTimeout(() => {
+          setIsBuying(false);
+          alert("Redirecionando para o Stripe Checkout (Ambiente Seguro)...");
+      }, 1500);
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-2xl transition-all duration-500 flex flex-col h-full group">
@@ -89,8 +99,8 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(course.price)}
               </span>
             </div>
-            <Button variant="primary" size="sm" onClick={() => alert(`Você será redirecionado para a plataforma de pagamento segura.`)} className="shadow-md hover:shadow-lg transform active:scale-95 transition-all">
-              Matricular-se
+            <Button variant="primary" size="sm" onClick={handleBuy} disabled={isBuying} className="shadow-md hover:shadow-lg transform active:scale-95 transition-all min-w-[120px]">
+              {isBuying ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : 'Matricular-se'}
             </Button>
           </div>
         </div>

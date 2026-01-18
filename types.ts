@@ -38,11 +38,10 @@ export interface Testimonial {
   avatar: string;
 }
 
-// Atualizado para refletir estrutura do DB/API
 export interface ChatMessage {
   id: string;
   role: 'user' | 'model';
-  content: string; // Renomeado de 'text' para 'content' para padronização
+  content: string;
   created_at?: string;
 }
 
@@ -59,3 +58,22 @@ export interface ChatResponse {
   messageId: string;
   conversationId: string;
 }
+
+export interface Note {
+  id: string;
+  lessonId: string;
+  timestamp: string; // ex: "02:30"
+  content: string;
+  createdAt: number;
+}
+
+export interface Comment {
+  id: string;
+  lessonId: string;
+  userId: string;
+  userName: string;
+  content: string;
+  createdAt: string;
+}
+
+export type ViewState = 'landing' | 'auth' | 'dashboard' | 'player' | 'playground';

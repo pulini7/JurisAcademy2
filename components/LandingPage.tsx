@@ -3,6 +3,7 @@ import { Menu, X, Scale, Facebook, Twitter, Linkedin, Instagram, ArrowRight, Shi
 import { CourseCard } from './CourseCard';
 import { Button } from './Button';
 import { Course, Instructor, Testimonial } from '../types';
+import { SocialProofToast } from './SocialProofToast';
 
 interface LandingPageProps {
   courses: Course[];
@@ -61,7 +62,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   const navLinkClass = "hover:text-juris-gold px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-juris-gold after:left-0 after:bottom-0 after:transition-all hover:after:w-full active:scale-95 active:text-yellow-500 transform";
 
   return (
-    <div className="min-h-screen flex flex-col font-sans">
+    <div className="min-h-screen flex flex-col font-sans relative">
+      <SocialProofToast />
+      
       {/* Navigation */}
       <nav className="fixed w-full z-50 bg-juris-900/95 backdrop-blur-md border-b border-juris-800 text-white transition-all duration-300 animate-fade-in-down">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
