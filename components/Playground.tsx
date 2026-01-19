@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useApp } from '../contexts/AppContext';
 import { Button } from './Button';
-import { FileText, Sparkles, AlertTriangle, ArrowLeft, Loader2 } from 'lucide-react';
+import { FileText, Sparkles, AlertTriangle, ArrowLeft, Loader2, UploadCloud, FileType } from 'lucide-react';
 
 export const Playground: React.FC = () => {
   const { setView } = useApp();
   const [contractText, setContractText] = useState('');
   const [analysis, setAnalysis] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleAnalyze = async () => {
     if (!contractText.trim()) return;
@@ -30,6 +31,13 @@ export const Playground: React.FC = () => {
     } finally {
         setIsAnalyzing(false);
     }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragging(false);
+      // Simulação: Extrair texto de arquivo
+      setContractText("CONTRATO DE PRESTAÇÃO DE SERVIÇOS JURÍDICOS (EXTRAÍDO DO PDF)\n\nCLÁUSULA 3ª. O pagamento será realizado mediante êxito total da demanda, fixado em 50% do valor da causa. \n\nCLÁUSULA 5ª. O foro de eleição será a Comarca de Moscou, Rússia, para dirimir quaisquer dúvidas.");
   };
 
   return (
@@ -56,15 +64,29 @@ export const Playground: React.FC = () => {
          <div className="flex flex-col h-full bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div className="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
                 <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                    <FileText className="w-4 h-4" /> Texto do Contrato
+                    <FileText className="w-4 h-4" /> Documento
                 </span>
                 <button className="text-xs text-juris-accent hover:underline" onClick={() => setContractText("CLÁUSULA 1. O pagamento será feito apenas se o CONTRATADO atingir 150% da meta, caso contrário haverá multa de 50% do valor do contrato em favor da CONTRATANTE.")}>
                     Inserir Exemplo
                 </button>
             </div>
+            
+            {/* File Upload Zone */}
+            <div 
+                className={`mx-4 mt-4 border-2 border-dashed rounded-xl p-6 text-center transition-colors cursor-pointer ${isDragging ? 'border-juris-accent bg-blue-50' : 'border-gray-300 hover:bg-gray-50'}`}
+                onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={handleDrop}
+                onClick={() => handleDrop({ preventDefault: () => {} } as any)}
+            >
+                <UploadCloud className={`mx-auto h-8 w-8 mb-2 ${isDragging ? 'text-juris-accent' : 'text-gray-400'}`} />
+                <p className="text-sm font-medium text-gray-600">Arraste seu PDF ou DOCX aqui</p>
+                <p className="text-xs text-gray-400 mt-1">Nossa IA extrai o texto automaticamente</p>
+            </div>
+
             <textarea 
-                className="flex-1 p-4 resize-none focus:outline-none focus:ring-2 focus:ring-inset focus:ring-juris-accent/20 font-mono text-sm"
-                placeholder="Cole aqui a cláusula ou contrato que deseja analisar..."
+                className="flex-1 p-4 resize-none focus:outline-none focus:ring-0 font-mono text-sm border-t border-gray-100 mt-4"
+                placeholder="Ou cole o texto do contrato aqui..."
                 value={contractText}
                 onChange={(e) => setContractText(e.target.value)}
             />

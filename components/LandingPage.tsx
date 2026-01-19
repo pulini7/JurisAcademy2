@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, Scale, Facebook, Twitter, Linkedin, Instagram, ArrowRight, ShieldCheck, ChevronDown, Users } from 'lucide-react';
+import { Menu, X, Scale, Facebook, Twitter, Linkedin, Instagram, ArrowRight, ShieldCheck, ChevronDown, Users, Check, Download, BookOpen } from 'lucide-react';
 import { CourseCard } from './CourseCard';
 import { Button } from './Button';
 import { Course, Instructor, Testimonial } from '../types';
@@ -227,8 +227,63 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </div>
       </section>
 
+      {/* Comparison Section (Sugestão Aplicada) */}
+      <section className="py-24 bg-gray-50 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <RevealOnScroll className="text-center mb-16">
+                <h2 className="text-3xl md:text-4xl font-serif font-bold text-juris-900 mb-4">O Futuro vs. O Passado</h2>
+                <p className="text-xl text-gray-500">Veja a diferença prática no dia a dia do escritório.</p>
+            </RevealOnScroll>
+            
+            <RevealOnScroll className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                {/* Tradicional */}
+                <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 opacity-80 hover:opacity-100 transition-opacity">
+                    <h3 className="text-xl font-bold text-gray-500 mb-6 flex items-center gap-2">
+                        <X className="w-6 h-6 text-red-500" /> Advocacia Tradicional
+                    </h3>
+                    <ul className="space-y-4">
+                        {[
+                            "4 horas para redigir uma inicial",
+                            "Pesquisa de jurisprudência manual e lenta",
+                            "Erros humanos por cansaço",
+                            "Atendimento limitado ao horário comercial"
+                        ].map((item, i) => (
+                            <li key={i} className="flex items-center text-gray-500 gap-3">
+                                <span className="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+                                {item}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                {/* Com IA */}
+                <div className="bg-white p-8 rounded-3xl shadow-xl border-2 border-juris-accent relative transform md:-translate-y-4">
+                    <div className="absolute -top-4 right-8 bg-juris-accent text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        Método JurisAcademy
+                    </div>
+                    <h3 className="text-2xl font-bold text-juris-900 mb-6 flex items-center gap-2">
+                        <Check className="w-6 h-6 text-green-500" /> Advocacia com IA
+                    </h3>
+                    <ul className="space-y-4">
+                         {[
+                            "15 minutos para redigir com alta qualidade",
+                            "Análise de 1.000 julgados em segundos",
+                            "Revisão automática de consistência",
+                            "Clientes atendidos 24/7 com chatbots próprios"
+                        ].map((item, i) => (
+                            <li key={i} className="flex items-center text-gray-800 font-medium gap-3">
+                                <Check className="w-5 h-5 text-green-500 shrink-0" />
+                                {item}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </RevealOnScroll>
+        </div>
+      </section>
+
       {/* Courses Section */}
-      <section id="courses" className="py-32 bg-gray-50 border-t border-gray-200">
+      <section id="courses" className="py-32 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RevealOnScroll className="text-center mb-20">
             <h2 className="text-juris-accent font-bold tracking-widest uppercase text-sm mb-4">Treinamentos de Elite</h2>
@@ -275,7 +330,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       </section>
 
       {/* Faculty Section */}
-      <section id="faculty" className="py-32 bg-white border-t border-gray-100">
+      <section id="faculty" className="py-32 bg-gray-50 border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RevealOnScroll className="text-center mb-20">
             <h2 className="text-juris-accent font-bold tracking-widest uppercase text-sm mb-4">Corpo Docente</h2>
@@ -341,6 +396,45 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             ))}
           </div>
         </div>
+      </section>
+      
+      {/* Lead Magnet Section (Sugestão Aplicada) */}
+      <section className="py-24 bg-gradient-to-r from-juris-800 to-juris-900 relative overflow-hidden">
+          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+              <RevealOnScroll className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-12">
+                  <div className="flex-1 text-center md:text-left">
+                      <div className="inline-flex items-center gap-2 bg-juris-gold/20 text-juris-gold px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wider mb-6">
+                          <BookOpen className="w-4 h-4" /> Download Gratuito
+                      </div>
+                      <h2 className="text-3xl md:text-5xl font-serif font-bold text-white mb-6">
+                          Guia: 50 Prompts Prontos para Advogados
+                      </h2>
+                      <p className="text-gray-300 text-lg mb-8 leading-relaxed">
+                          Não sabe por onde começar? Baixe nosso guia exclusivo e comece a economizar tempo hoje mesmo. Contratos, petições e e-mails em segundos.
+                      </p>
+                      <div className="flex flex-col sm:flex-row gap-4">
+                          <input 
+                            type="email" 
+                            placeholder="Seu melhor e-mail corporativo" 
+                            className="flex-1 px-6 py-4 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-juris-gold"
+                          />
+                          <Button variant="secondary" className="whitespace-nowrap shadow-lg shadow-yellow-500/20">
+                              Baixar Agora <Download className="ml-2 w-5 h-5" />
+                          </Button>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-4">*Respeitamos sua privacidade. Sem spam.</p>
+                  </div>
+                  <div className="w-full md:w-1/3 relative group">
+                      <div className="absolute inset-0 bg-juris-accent blur-3xl opacity-20 group-hover:opacity-40 transition-opacity duration-700"></div>
+                      <img 
+                        src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=600" 
+                        alt="Capa do Ebook" 
+                        className="relative rounded-lg shadow-2xl transform rotate-3 group-hover:rotate-0 transition-all duration-700 border-4 border-white/10"
+                      />
+                  </div>
+              </RevealOnScroll>
+          </div>
       </section>
 
       {/* FAQ */}
